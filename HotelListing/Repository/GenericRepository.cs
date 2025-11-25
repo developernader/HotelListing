@@ -1,11 +1,11 @@
-﻿using HotelListing.Data;
-using HotelListing.IRepository;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using HotelListing.Data;
+using HotelListing.IRepository;
 
 namespace HotelListing.Repository
 {
@@ -37,9 +37,9 @@ namespace HotelListing.Repository
             IQueryable<T> query = _db;
             if (includes != null)
             {
-                foreach (var includePropery in includes)
+                foreach (var includeProperty in includes)
                 {
-                    query = query.Include(includePropery);
+                    query = query.Include(includeProperty);
                 }
             }
             return await query.AsNoTracking().FirstOrDefaultAsync(expression);
@@ -55,9 +55,9 @@ namespace HotelListing.Repository
 
             if (includes != null)
             {
-                foreach (var includePropery in includes)
+                foreach (var includeProperty in includes)
                 {
-                    query = query.Include(includePropery);
+                    query = query.Include(includeProperty);
                 }
             }
 
