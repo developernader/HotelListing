@@ -42,7 +42,7 @@ namespace HotelListing.Migrations
                         {
                             Id = 1,
                             Name = "Egypt",
-                            ShortName = "CA"
+                            ShortName = "EG"
                         },
                         new
                         {
