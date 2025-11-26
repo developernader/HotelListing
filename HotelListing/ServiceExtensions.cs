@@ -10,7 +10,7 @@ namespace HotelListing
 {
     public static class ServiceExtensions
     {
-        public static void ConfigueIdentity(this IServiceCollection services)
+        public static void ConfigureIdentity(this IServiceCollection services)
         {
             var builder = services.AddIdentityCore<ApiUser>(q => q.User.RequireUniqueEmail = true);
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), services);
