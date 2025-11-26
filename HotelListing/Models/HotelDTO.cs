@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HotelListing.Models
 {
-    public class HotelDTO : CreateCountryDTO
+    public class HotelDTO : CreateHotelDTO
     {
         public int Id { get; set; }
 
-        //public CountryDTO Country { get; set; }
+        public CountryDTO Country { get; set; }
     }
 
     public class CreateHotelDTO 

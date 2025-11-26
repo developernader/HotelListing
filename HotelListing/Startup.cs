@@ -17,7 +17,7 @@ using HotelListing.IRepository;
 using HotelListing.Repository;
 using HotelListing.Configurations;
 using AutoMapper;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace HotelListing
 {
@@ -37,6 +37,7 @@ namespace HotelListing
             {
                 options.UseSqlServer(Configuration.GetConnectionString("sqlConnection"));
             });
+            
 
             services.AddCors(o =>
             {
