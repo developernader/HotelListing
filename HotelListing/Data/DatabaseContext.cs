@@ -15,6 +15,8 @@ namespace HotelListing.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // This line is crucial!
+
             modelBuilder.Entity<Country>().HasData(
                 new Country { Id = 1, Name = "Egypt", ShortName = "EG" },
                 new Country { Id = 2, Name = "Bahamas", ShortName = "BS" },
