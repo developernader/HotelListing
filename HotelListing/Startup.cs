@@ -40,8 +40,8 @@ namespace HotelListing
             });
 
             services.AddAuthentication();
-
             services.ConfigureIdentity();
+            services.ConfigureJWT(Configuration);
 
             services.AddCors(o =>
             {
