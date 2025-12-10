@@ -18,7 +18,7 @@ using HotelListing.Repository;
 using HotelListing.Configurations;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-
+using HotelListing.Services;
 
 namespace HotelListing
 {
@@ -56,6 +56,7 @@ namespace HotelListing
             services.AddAutoMapper(typeof(MapperInitializer));
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAuthManager, AuthManager>();
 
             services.AddSwaggerGen(c =>
             {
