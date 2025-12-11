@@ -19,7 +19,7 @@ namespace HotelListing.Controllers
         private readonly UserManager<ApiUser> _userManager;
         private readonly ILogger<AccountController> _logger;
         private readonly IMapper _mapper;
-
+        private readonly SignInManager<ApiUser> _signInManager;
         public AccountController(UserManager<ApiUser> userManager, ILogger<AccountController> logger, IMapper mapper)
         {
             this._userManager = userManager;
@@ -65,34 +65,34 @@ namespace HotelListing.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Route("login")]
-        //public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDTO)
-        //{
-        //    _logger.LogInformation($"Login Attempt for {loginUserDTO.Email}");
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDTO)
+        {
+            _logger.LogInformation($"Login Attempt for {loginUserDTO.Email}");
 
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(modelState: ModelState);
-        //    }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(modelState: ModelState);
+            }
 
-        //    try
-        //    {
-        //        var result = await _signInManager.PasswordSignInAsync(loginUserDTO.Email, loginUserDTO.Password, false, false);
-        //        if (!result.Succeeded)
-        //        {
-        //            return Unauthorized(loginUserDTO);
-        //        }
+            try
+            {
+                var result = await _signInManager.PasswordSignInAsync(loginUserDTO.Email, loginUserDTO.Password, false, false);
+                if (!result.Succeeded)
+                {
+                    return Unauthorized(loginUserDTO);
+                }
 
-        //        return Accepted();
-        //        //return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"Something Went Wrong in the {nameof(Login)}");
-        //        return Problem($"Something Went Wrong in the {nameof(Login)}", statusCode: 500);
-        //    }
-        //}
+                return Accepted();
+                //return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Something Went Wrong in the {nameof(Login)}");
+                return Problem($"Something Went Wrong in the {nameof(Login)}", statusCode: 500);
+            }
+        }
 
 
     }

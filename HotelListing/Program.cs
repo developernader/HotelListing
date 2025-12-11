@@ -16,7 +16,7 @@ namespace HotelListing
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.File(path: "c:\\hotlelisting\\logs\\log-.txt",
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:1j}{NewLine}{Exception}",
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:1j}{NewLine}{Exception}\n\n",
                 rollingInterval: RollingInterval.Day,
                 restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
                 ).CreateLogger();
