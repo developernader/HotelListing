@@ -17,11 +17,19 @@ namespace HotelListing
     {
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            var builder = services.AddIdentityCore<ApiUser>(q => q.User.RequireUniqueEmail = true);
+            var builder = services.AddIdentityCore<ApiUser>(options =>
+                options.User.RequireUniqueEmail = true,
+                
+            );
 
-            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), services);
+            builder.Services.AddIdentityCore<ApiUser>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<DatabaseContext>()
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
 
-            builder.AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
+            //builder.AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
+            //builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), services);
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
