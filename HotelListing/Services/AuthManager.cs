@@ -17,67 +17,79 @@ namespace HotelListing.Services
     {
         private readonly UserManager<ApiUser> _userManager;
         private readonly IConfiguration _configuration;
-        private ApiUser _user;
 
-        public AuthManager(UserManager<ApiUser> userManager, IConfiguration configuration)
+        public AuthManager(
+            UserManager<ApiUser> userManager,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
         }
 
-        public async Task<string> CreateToken()
+        public async Task<bool> ValidateUser(LoginUserDTO loginUserDTO)
         {
-            var signingCradentials = GetSigningCradentials();
-            var claims = await GetClaims();
-            var token = GenerateTokenOptions(signingCradentials, claims);
+            var user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
+            return user != null &&
+                   await _userManager.CheckPasswordAsync(user, loginUserDTO.Password);
+        }
+
+        public async Task<string> GenerateToken(ApiUser user)
+        {
+            var signingCredentials = GetSigningCredentials();
+            var claims = await GetClaims(user);
+            var token = GenerateTokenOptions(signingCredentials, claims);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
+        private async Task<List<Claim>> GetClaims(ApiUser user)
         {
-            var jwtSettings = _configuration.GetSection("Jwt");
-            var expiration = DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings.GetSection("Lifetime").Value));
-
-            var token = new JwtSecurityToken(
-                issuer: jwtSettings.GetSection("Issure").Value,
-                claims: claims,
-                expires: expiration,
-                signingCredentials: signingCredentials);
-
-            return token;
-        }
-
-        private async Task<List<Claim>> GetClaims()
+            var claims = new List<Claim>
         {
-            var clamis = new List<Claim>
-            {
-              new Claim(ClaimTypes.Name,_user.UserName)
-            };
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
 
-            //clamis.Add(new Claim(ClaimTypes.Name, _user.UserName));
-
-            var roles = await _userManager.GetRolesAsync(_user);
+            var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
-                clamis.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            return clamis;
+            return claims;
         }
 
-        private SigningCredentials GetSigningCradentials()
+        private SigningCredentials GetSigningCredentials()
         {
-            var key = Environment.GetEnvironmentVariable("Key");
+            var key =
+                Environment.GetEnvironmentVariable("JWT_KEY")
+                ?? _configuration["Jwt:Key"];
+
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ApplicationException("JWT signing key not found");
+
             var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        public async Task<bool> ValidateUser(LoginUserDTO loginUserDTO)
-        {
-            _user = await _userManager.FindByNameAsync(loginUserDTO.Email);
-            return (_user != null && await _userManager.CheckPasswordAsync(_user, loginUserDTO.Password));
-        }
 
+        private JwtSecurityToken GenerateTokenOptions(
+            SigningCredentials signingCredentials,
+            List<Claim> claims)
+        {
+            var jwtSettings = _configuration.GetSection("Jwt");
+            var expiration = DateTime.UtcNow.AddMinutes(
+                jwtSettings.GetValue<double>("Lifetime"));
+
+            return new JwtSecurityToken(
+                issuer: jwtSettings.GetValue<string>("Issuer"),
+                audience: jwtSettings.GetValue<string>("Audience"),
+                claims: claims,
+                expires: expiration,
+                signingCredentials: signingCredentials
+            );
+        }
     }
+
 }

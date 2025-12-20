@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.Data;
 using HotelListing.Models;
+using HotelListing.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,18 +15,20 @@ namespace HotelListing.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApiUser> _userManager;
-        private readonly SignInManager<ApiUser> _signInManager;
         private readonly ILogger<AccountController> _logger;
         private readonly IMapper _mapper;
+        private readonly IAuthManager _authManager;
+
         public AccountController(UserManager<ApiUser> userManager,
-            SignInManager<ApiUser> signInManager,
+            IAuthManager authManager,
             ILogger<AccountController> logger,
             IMapper mapper)
         {
             this._userManager = userManager;
-            this._signInManager = signInManager;
+            //this._signInManager = signInManager;
             this._logger = logger;
             this._mapper = mapper;
+            this._authManager = authManager;
         }
 
         [HttpPost]
@@ -73,27 +76,26 @@ namespace HotelListing.Controllers
             _logger.LogInformation($"Login Attempt for {loginUserDTO.Email}");
 
             if (!ModelState.IsValid)
-            {
-                return BadRequest(modelState: ModelState);
-            }
+                return BadRequest(ModelState);
 
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(loginUserDTO.Email, loginUserDTO.Password, false, false);
-                if (!result.Succeeded)
-                {
-                    return Unauthorized(loginUserDTO);
-                }
+                var user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
 
-                return Accepted();
-                //return Ok();
+                if (user == null || !await _userManager.CheckPasswordAsync(user, loginUserDTO.Password))
+                    return Unauthorized("Invalid credentials");
+
+                var token = await _authManager.GenerateToken(user);
+
+                return Ok(new { Token = token });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Something Went Wrong in the {nameof(Login)}");
-                return Problem($"Something Went Wrong in the {nameof(Login)}", statusCode: 500);
+                return Problem("Something went wrong", statusCode: 500);
             }
         }
+
 
 
     }

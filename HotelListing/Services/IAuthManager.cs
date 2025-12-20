@@ -1,4 +1,5 @@
-﻿using HotelListing.Models;
+﻿using HotelListing.Data;
+using HotelListing.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,9 @@ namespace HotelListing.Services
 {
     public interface IAuthManager
     {
+
         Task<bool> ValidateUser(LoginUserDTO loginUserDTO);
-        Task<string> CreateToken();
+        Task<string> GenerateToken(ApiUser user);
+
     }
 }

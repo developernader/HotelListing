@@ -18,18 +18,15 @@ namespace HotelListing
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             var builder = services.AddIdentityCore<ApiUser>(options =>
-                options.User.RequireUniqueEmail = true,
-                
+                options.User.RequireUniqueEmail = true
+
             );
 
             builder.Services.AddIdentityCore<ApiUser>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<DatabaseContext>()
-            .AddSignInManager()
-            .AddDefaultTokenProviders();
 
-            //builder.AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
-            //builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), services);
+            .AddDefaultTokenProviders();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
@@ -47,8 +44,10 @@ namespace HotelListing
                 o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuer = true,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
+                    
                     ValidIssuer = jwtSettings.GetSection("Issure").Value,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Key"))
                 };

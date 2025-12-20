@@ -40,6 +40,7 @@ namespace HotelListing
             });
 
             services.AddAuthentication();
+            services.AddAuthorization();
             
             services.ConfigureIdentity();
             services.ConfigureJWT(Configuration);
@@ -115,10 +116,8 @@ namespace HotelListing
             app.UseCors("AllowAll");
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.UseAuthorization();
-
 
             app.UseEndpoints(endpoints =>
             {
