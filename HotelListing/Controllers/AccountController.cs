@@ -2,6 +2,7 @@
 using HotelListing.Data;
 using HotelListing.Models;
 using HotelListing.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,7 +26,6 @@ namespace HotelListing.Controllers
             IMapper mapper)
         {
             this._userManager = userManager;
-            //this._signInManager = signInManager;
             this._logger = logger;
             this._mapper = mapper;
             this._authManager = authManager;
@@ -33,6 +33,10 @@ namespace HotelListing.Controllers
 
         [HttpPost]
         [Route("register")]
+
+        [ProducesResponseType(Microsoft.AspNetCore.Http.StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
             _logger.LogInformation($"Regestration Attempt for {userDTO.Email}");

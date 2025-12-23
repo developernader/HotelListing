@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using HotelListing.Data;
 using HotelListing.IRepository;
 using HotelListing.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -60,5 +62,13 @@ namespace HotelListing.Controllers
                 return StatusCode(500, "Internal Server Error. Please Try Again Later.");
             }
         }
+
+        [HttpPost]
+        //[Authorize(Roles = RoleNames.Administrator)]
+        public async Task<ActionResult<CreateCountryDTO>> PostCountry([FromBody] Country country)
+        {
+            return Ok();
+        }
+
     }
 }

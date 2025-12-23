@@ -32,7 +32,7 @@ namespace HotelListing
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("Jwt");
-            var key = Environment.GetEnvironmentVariable("Key");
+            var key = Environment.GetEnvironmentVariable("Jwt_Key");
 
             services.AddAuthentication(o =>
             {
@@ -48,8 +48,8 @@ namespace HotelListing
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     
-                    ValidIssuer = jwtSettings.GetSection("Issure").Value,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Key"))
+                    ValidIssuer = jwtSettings.GetSection("Issuer").Value,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                 };
             });
         }
