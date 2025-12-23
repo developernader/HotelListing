@@ -72,7 +72,7 @@ namespace HotelListing
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
-                    Description = @"JWT Authorization header using the Berear Scheme.
+                    Description = @"JWT Authorization header using the Bearer Scheme.
                 Enter 'Bearer' [space] and then your token in the text input below 
                 Example : 'Berear 12345abcdef' ",
                     Name = "Authorization",
