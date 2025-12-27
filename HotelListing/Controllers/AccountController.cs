@@ -33,8 +33,7 @@ namespace HotelListing.Controllers
 
         [HttpPost]
         [Route("register")]
-
-        [ProducesResponseType(Microsoft.AspNetCore.Http.StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
